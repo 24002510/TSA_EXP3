@@ -1,5 +1,5 @@
 # Ex.No: 03   COMPUTE THE AUTO FUNCTION(ACF)
-Date: 
+Date: 25/08/2026
 
 ### AIM:
 To Compute the AutoCorrelation Function (ACF) of the data for the first 35 lags to determine the model
@@ -11,33 +11,54 @@ type to fit the data.
 4. Store the results in an array
 5. Represent the result in graphical representation as given below.
 ### PROGRAM:
+~~~py
 import matplotlib.pyplot as plt
-
 import numpy as np
+import pandas as pd
 
-data = [3, 16, 156, 47, 246, 176, 233, 140, 130,
-101, 166, 201, 200, 116, 118, 247,
-209, 52, 153, 232, 128, 27, 192, 168, 208,
-187, 228, 86, 30, 151, 18, 254,
-76, 112, 67, 244, 179, 150, 89, 49, 83, 147, 90,
-33, 6, 158, 80, 35, 186, 127]
+data = pd.read_csv("/content/air traffic.csv")
 
+# Display available columns for user to choose from
+print("Available columns:", data.columns.tolist())
+
+# Select a specific column for time series analysis, e.g., 'Pax'
+# Clean the column by removing commas and converting to numeric
+time_series = data['Pax'].str.replace(',', '', regex=False).astype(float)
+
+N = len(time_series)
+
+# Define lags
 lags = range(35)
+# Pre-allocate autocorrelation table
+autocorr_values = []
 
+# Mean of the time series
+mean_data = np.mean(time_series)
+# Variance of the time series
+variance_data = np.var(time_series)
 
-#Pre-allocate autocorrelation table
+# Go through lag components one-by-one
+for lag in lags:
+  if lag == 0:
+    autocorr_values.append(1)
+  else:
+    # Calculate autocovariance for the given lag
+    auto_cov = np.sum((time_series[:-lag] - mean_data) * (time_series[lag:] - mean_data)) / N
+    # Normalize by variance to get autocorrelation
+    autocorr_values.append(auto_cov / variance_data)
 
-#Mean
-
-#Variance
-
-#Normalized data
-
-#Go through lag components one-by-one
-
-#display the graph
-
+# Display the graph
+plt.figure(figsize=(10, 6))
+plt.stem(lags, autocorr_values)
+plt.title('Autocorrelation of Pax Data')
+plt.xlabel('Lag')
+plt.ylabel('Autocorrelation')
+plt.grid(True)
+plt.show()
+~~~
 ### OUTPUT:
 
+<img width="1797" height="814" alt="Screenshot 2026-08-04 234639" src="https://github.com/user-attachments/assets/8351959d-06dc-47da-9bc6-908bea77a0fe" />
+
 ### RESULT:
-        Thus we have successfully implemented the auto correlation function in python.
+Thus we have successfully implemented the auto correlation function in python.
